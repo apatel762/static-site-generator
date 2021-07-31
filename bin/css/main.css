@@ -1,57 +1,59 @@
 /* BEGIN theming */
 :root {
-  --base-bg: white;
-  --base-label: black;
-  --base-label-secondary: #8a8a8a;
-  --base-label-tertiary: #c4c4c4;
-  --base-label-quaternary: #dcdcdc;
+  --base-bg: #151515;
+  --base-label: #d2d2d2;
+  --base-label-secondary: #a1a1a1;
+  --base-label-tertiary: #474747;
+  --base-label-quaternary: #2a2a2a;
 
-  --elevated-bg: rgb(227, 227, 227);
-  --elevated-label: rgb(0, 0, 0);
-  --elevated-label-secondary: rgb(118, 118, 118);
-  --elevated-label-tertiary: rgb(168, 168, 168);
-  --elevated-label-quaternary: rgb(192, 192, 192);
+  --elevated-bg: #1c1c1c;
+  --elevated-label: #d2d2d2;
+  --elevated-label-secondary: #989898;
+  --elevated-label-tertiary: #5a5a5a;
+  --elevated-label-quaternary: #404040;
 
-  --blue: rgb(0,64,221);
-  --green: rgb(36,138,61);
-  --indigo: rgb(54,52,163);
-  --orange: rgb(201,52,0);
-  --pink: rgb(211,15,69);
-  --purple: rgb(127,68,171);
-  --red: rgb(215,0,21);
-  --teal: rgb(0,113,164);
-  --yellow: rgb(178,80,0);
+  --blue: rgb(64,156,255);
+  --green: rgb(48,219,91);
+  --indigo: rgb(125,122,255);
+  --orange: rgb(255,179,64);
+  --pink: rgb(255,100,130);
+  --purple: rgb(218,143,255);
+  --red: rgb(255,105,97);
+  --teal: rgb(112,215,255);
+  --yellow: rgb(255,212,38);
 
-  --link-hover: rgba(0, 0, 0, 0.1);
+  --link-hover: rgba(255, 255, 255, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
+/*
+@media (prefers-color-scheme: light) {
   :root {
-    --base-bg: #151515;
-    --base-label: #d2d2d2;
-    --base-label-secondary: #a1a1a1;
-    --base-label-tertiary: #474747;
-    --base-label-quaternary: #2a2a2a;
+    --base-bg: white;
+    --base-label: black;
+    --base-label-secondary: #8a8a8a;
+    --base-label-tertiary: #c4c4c4;
+    --base-label-quaternary: #dcdcdc;
 
-    --elevated-bg: #1c1c1c;
-    --elevated-label: #d2d2d2;
-    --elevated-label-secondary: #989898;
-    --elevated-label-tertiary: #5a5a5a;
-    --elevated-label-quaternary: #404040;
+    --elevated-bg: rgb(227, 227, 227);
+    --elevated-label: rgb(0, 0, 0);
+    --elevated-label-secondary: rgb(118, 118, 118);
+    --elevated-label-tertiary: rgb(168, 168, 168);
+    --elevated-label-quaternary: rgb(192, 192, 192);
 
-    --blue: rgb(64,156,255);
-    --green: rgb(48,219,91);
-    --indigo: rgb(125,122,255);
-    --orange: rgb(255,179,64);
-    --pink: rgb(255,100,130);
-    --purple: rgb(218,143,255);
-    --red: rgb(255,105,97);
-    --teal: rgb(112,215,255);
-    --yellow: rgb(255,212,38);
+    --blue: rgb(0,64,221);
+    --green: rgb(36,138,61);
+    --indigo: rgb(54,52,163);
+    --orange: rgb(201,52,0);
+    --pink: rgb(211,15,69);
+    --purple: rgb(127,68,171);
+    --red: rgb(215,0,21);
+    --teal: rgb(0,113,164);
+    --yellow: rgb(178,80,0);
 
-    --link-hover: rgba(255, 255, 255, 0.1);
+    --link-hover: rgba(0, 0, 0, 0.1);
   }
 }
+*/
 /* END theming */
 
 /* BEGIN center align body */
