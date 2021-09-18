@@ -97,9 +97,9 @@ if __name__ == '__main__':
     generate_backlinks_files.generate_backlinks_files(
         notes_folder=args.notes,
         backlinks_folder=args.temp)
-    # generate_index_file.create_index_file(
-    #     temp_folder=args.temp,
-    #     notes_folder=args.notes)
+    generate_index_file.create_index_file(
+        temp_folder=args.temp,
+        notes_folder=args.notes)
     # pandocify.do_pandoc_generation(
     #     notes_folder=args.notes,
     #     temp_folder=args.temp,
