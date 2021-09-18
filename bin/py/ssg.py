@@ -1,5 +1,4 @@
 import argparse
-import hashlib
 import json
 import os
 from argparse import Namespace
@@ -29,9 +28,12 @@ def persist_json(json_struct: dict, location: str) -> None:
 def read_existing_json_state_file(location: str) -> dict:
     if util.check_file_exists(util.path(location, 'state.json')):
         logger.info('reading existing json state file')
-        with open(util.path(location, 'state.json'), 'r') as f:
-            data: str = f.read()
-            return json.loads(data)
+        try:
+            with open(util.path(location, 'state.json'), 'r') as f:
+                data: str = f.read()
+                return json.loads(data)
+        except json.decoder.JSONDecodeError:
+            return {}
     else:
         logger.info('no existing state file found, creating a new one')
         return {}
