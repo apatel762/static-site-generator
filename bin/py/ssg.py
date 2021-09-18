@@ -1,5 +1,7 @@
 import argparse
+import hashlib
 import json
+import os
 from argparse import Namespace
 from datetime import datetime
 from logging import Logger
@@ -10,7 +12,7 @@ import generate_index_file
 import pandocify
 
 
-DATE_TIME_FORMAT = '%Y-%m-%dT%H%M%S'
+DATE_TIME_FORMAT = '%Y-%m-%dT%H%M%SZ'
 
 
 def persist_json(json_struct: dict, location: str) -> None:
@@ -25,7 +27,7 @@ def persist_json(json_struct: dict, location: str) -> None:
 
 
 def read_existing_json_state_file(location: str) -> dict:
-    if util.validate_file_exists(util.path(location, 'state.json')):
+    if util.check_file_exists(util.path(location, 'state.json')):
         logger.info('reading existing json state file')
         with open(util.path(location, 'state.json'), 'r') as f:
             data: str = f.read()
@@ -35,11 +37,56 @@ def read_existing_json_state_file(location: str) -> dict:
         return {}
 
 
-def setup_json_state_file(location: str) -> None:
-    state_file: dict = read_existing_json_state_file(location=location)
-    logger.info('persisting current script runtime to state file')
-    state_file['runtime'] = datetime.now().strftime(DATE_TIME_FORMAT)
+def setup_json_state_file(location: str, notes_folder: str) -> None:
+    """
+    The main orchestrator of the state file mechanics. This method must be
+    idempotent.
 
+    Args:
+        location (str): The relative or absolute location of the folder that
+        contains the JSON state file
+    """
+    state_file: dict = read_existing_json_state_file(location=location)
+
+    now: datetime = datetime.utcnow()
+    now_str: str = now.strftime(DATE_TIME_FORMAT)
+
+    # record current script runtime
+    state_file['runtime'] = now_str
+
+    # ensure that the files section of the state file exists
+    if 'files' not in state_file:
+        state_file['files'] = {}
+
+    # ensure that file data is up to date
+    for file_name_ in os.listdir(notes_folder):
+        if not util.is_md(file_name_):
+            continue
+
+        file_path: str = util.path(notes_folder, file_name_)
+
+        key: str = util.strip_file_extension(file_name_)
+
+        # if it's a new file, populate the metadata
+        if key not in state_file['files']:
+            logger.info(f'adding new key in files: {key}')
+            state_file['files'][key]: dict = {}
+            state_file['files'][key]['sha256']: str = util.sha256(file_path)
+            state_file['files'][key]['last_checked']: str = now_str
+
+            # we are done processing this file, move to the next one
+            continue
+
+        # if the file was modified since we last checked it (which we know
+        # has happened if the hash has changed) then update its info
+        current_file_hash: str = util.sha256(file_path)
+        if current_file_hash != state_file['files'][key]['sha256']:
+            logger.info(f'updating changed key: {key}')
+            state_file['files'][key]['sha256']: str = current_file_hash
+            state_file['files'][key]['last_checked']: str = now_str
+
+    # save the new state of the JSON file to disk so that we can use it
+    # the next time the script is run
     persist_json(state_file, location)
 
 if __name__ == '__main__':
@@ -69,7 +116,7 @@ if __name__ == '__main__':
     args: Namespace = parser.parse_args()
     logger: Logger = util.get_logger(logger_name='ssg')
 
-    setup_json_state_file(location=args.temp)
+    setup_json_state_file(location=args.temp, notes_folder=args.notes)
 
     # generate_backlinks_files.generate_backlinks_files(
     #     notes_folder=args.notes,

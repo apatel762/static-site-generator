@@ -43,7 +43,7 @@ def do_pandoc_generation(notes_folder: str, temp_folder: str, html_folder: str) 
     # if the index.md was generated in the temp folder, pandocify it
     index_file_name = 'index.md'
     generated_index_file = util.path(temp_folder, index_file_name)
-    if util.validate_file_exists(generated_index_file, error_on_validation_failure=False):
+    if util.check_file_exists(generated_index_file):
         output_file = util.path(
             html_folder, util.change_file_extension(index_file_name, '.html'))
         index_title = util.note_title(generated_index_file)

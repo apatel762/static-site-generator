@@ -1,11 +1,13 @@
+import hashlib
 import logging
 import os
 import pathlib
 import string
 import sys
 import unicodedata
-from typing import List, Union
+from datetime import datetime
 from subprocess import CompletedProcess, run
+from typing import List
 
 
 def get_logger(logger_name: str) -> logging.Logger:
@@ -20,7 +22,7 @@ def get_logger(logger_name: str) -> logging.Logger:
     return logger
 
 
-def validate_file_exists(path: str, error_on_validation_failure: bool = True) -> bool:
+def check_file_exists(path: str, error_on_validation_failure: bool = False) -> bool:
     if os.path.isfile(path):
         return True
     else:
@@ -28,6 +30,12 @@ def validate_file_exists(path: str, error_on_validation_failure: bool = True) ->
             raise FileNotFoundError(f'could not find \'{path}\'')
         else:
             return False
+
+
+def sha256(file_name: str) -> str:
+    with open(file_name, "rb") as f:
+        raw_hash = hashlib.sha256(f.read())
+        return raw_hash.hexdigest()
 
 
 def last_n_chars(s: str, n: int) -> str:
@@ -101,6 +109,10 @@ def to_footnote_id(file_name) -> str:
 
 def create_folder(location: str) -> None:
     pathlib.Path(location).mkdir(parents=True, exist_ok=True)
+
+
+def mtime(file_name: str) -> datetime:
+    return datetime.fromtimestamp(os.path.getmtime(file_name))
 
 
 def path(*args: str) -> str:
