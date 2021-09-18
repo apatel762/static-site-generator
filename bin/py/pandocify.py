@@ -16,19 +16,7 @@ def validate_file_exists(path: str, error_on_validation_failure: bool = True) ->
             return False
 
 
-def get_lua_filter() -> str:
-    path: str = util.path('bin', 'links_to_html.lua')
-    validate_file_exists(path)
-    return path
-
-
-def get_meta_html() -> str:
-    path: str = util.path('bin', 'meta', 'meta.html')
-    validate_file_exists(path)
-    return path
-
-
-def main(notes_folder: str, temp_folder: str, html_folder: str) -> None:
+def do_pandoc_generation(notes_folder: str, temp_folder: str, html_folder: str) -> None:
     logger: Logger = util.get_logger(logger_name='pandocify')
 
     for folder in [notes_folder, temp_folder, html_folder]:
@@ -100,4 +88,4 @@ if __name__ == '__main__':
         help='The relative path to the folder where HTML files will go')
     args: Namespace = parser.parse_args()
 
-    main(notes_folder=args.notes, temp_folder=args.temp, html_folder=args.html)
+    do_pandoc_generation(notes_folder=args.notes, temp_folder=args.temp, html_folder=args.html)

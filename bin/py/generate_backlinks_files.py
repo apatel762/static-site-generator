@@ -40,37 +40,11 @@ def backlinks_html(refs: List[Tuple[str, str]]) -> str:
     return '\n'.join(txt)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description='Generate backlinks for files in a given folder')
-    parser.add_argument(
-        '-n', '--notes',
-        required=True,
-        type=str,
-        help='The absolute path of the folder that holds all of your notes. '
-             'All of the notes that you want to generate the backlinks for '
-             'should be in the top-level of this folder; the script will not '
-             'recursively serach for any markdown files that are in '
-             'subfolders.')
-    parser.add_argument(
-        '-t', '--temp',
-        required=True,
-        type=str,
-        help='The relative path of a folder where you want the backlinks '
-             'files to be stored when they are generated.'
-    )
-    args = parser.parse_args()
-    logger: Logger = util.get_logger(logger_name='generate_backlinks_files')
-
-    notes_folder = args.notes
-    backlinks_folder = args.temp
-
+def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
     file_names = markdown_filenames(folder_path=notes_folder)
     logger.info(f'Found {len(file_names)} files in {notes_folder}')
-
     util.create_folder(location=backlinks_folder)
     logger.info(f'Will put backlinks into: {backlinks_folder}/')
-
     # NOTE: current backlink searching is slow... O(n^2)
     for file_name in file_names:
         # a list of all of the files that reference this one
@@ -104,3 +78,28 @@ if __name__ == '__main__':
         backlinks_file_path = f'{backlinks_folder}/{file_name}.backlinks'
         with open(backlinks_file_path, 'w') as f:
             f.write(backlinks_html(refs=references))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Generate backlinks for files in a given folder')
+    parser.add_argument(
+        '-n', '--notes',
+        required=True,
+        type=str,
+        help='The absolute path of the folder that holds all of your notes. '
+             'All of the notes that you want to generate the backlinks for '
+             'should be in the top-level of this folder; the script will not '
+             'recursively serach for any markdown files that are in '
+             'subfolders.')
+    parser.add_argument(
+        '-t', '--temp',
+        required=True,
+        type=str,
+        help='The relative path of a folder where you want the backlinks '
+             'files to be stored when they are generated.'
+    )
+    args = parser.parse_args()
+    logger: Logger = util.get_logger(logger_name='generate_backlinks_files')
+
+    generate_backlinks_files(notes_folder=args.notes, backlinks_folder=args.temp)
