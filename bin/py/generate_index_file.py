@@ -40,13 +40,14 @@ def create_index_file(temp_folder: str, notes_folder: str):
     data: List[Tuple[str, str]] = link_data(folder_path=notes_folder)
     todos: List[Tuple[str, List[str]]] = todo_data(folder_path=notes_folder)
 
-    logger.info(f'creating index.md in {temp_folder}')
     for file_name, title in data:
         if file_name == 'index.md':
             logger.warning('aborting, you have a custom index.md in your notes')
             sys.exit(0)
 
     with open(f'{temp_folder}/index.md', 'w') as f:
+        logger.info(f'creating index.md in {temp_folder}')
+
         f.write('# Home')
         f.write('\n')
         f.write('\n')

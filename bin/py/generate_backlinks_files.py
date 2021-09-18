@@ -44,22 +44,26 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Generate backlinks for files in a given folder')
     parser.add_argument(
-        'notes_folder', type=str,
+        '-n', '--notes',
+        required=True,
+        type=str,
         help='The absolute path of the folder that holds all of your notes. '
              'All of the notes that you want to generate the backlinks for '
              'should be in the top-level of this folder; the script will not '
              'recursively serach for any markdown files that are in '
              'subfolders.')
     parser.add_argument(
-        'temp_folder', type=str,
+        '-t', '--temp',
+        required=True,
+        type=str,
         help='The relative path of a folder where you want the backlinks '
              'files to be stored when they are generated.'
     )
     args = parser.parse_args()
     logger: Logger = util.get_logger(logger_name='generate_backlinks_files')
 
-    notes_folder = args.notes_folder
-    backlinks_folder = args.temp_folder
+    notes_folder = args.notes
+    backlinks_folder = args.temp
 
     file_names = markdown_filenames(folder_path=notes_folder)
     logger.info(f'Found {len(file_names)} files in {notes_folder}')

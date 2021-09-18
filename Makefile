@@ -35,8 +35,8 @@ install:
 
 generate-backlinks:
 	@venv/bin/python bin/py/generate_backlinks_files.py \
-		"$(MARKDOWN_FILES_LOCATION)" \
-		"$(TEMP_FOLDER)"
+		--temp "$(TEMP_FOLDER)" \
+		--notes "$(MARKDOWN_FILES_LOCATION)"
 
 generate-index:
 	@venv/bin/python bin/py/generate_index_file.py \
@@ -45,8 +45,8 @@ generate-index:
 
 pandoc-conversion:
 	@venv/bin/python bin/py/pandocify.py \
-		--notes "$(MARKDOWN_FILES_LOCATION)" \
 		--temp "$(TEMP_FOLDER)" \
+		--notes "$(MARKDOWN_FILES_LOCATION)" \
 		--html "$(HTML_FOLDER)"
 
 copy-css-and-js:
@@ -59,9 +59,6 @@ copy-css-and-js:
 	@rsync -avzh --ignore-missing-args bin/js/*.js "$(HTML_FOLDER)/js"
 	@rsync -avzh --ignore-missing-args bin/js/index.json "$(HTML_FOLDER)/js"
 	@rsync -avzh --ignore-missing-args "$(MARKDOWN_FILES_LOCATION)/html" "$(HTML_FOLDER)"
-
-server:
-	python3 -m http.server --directory "$(HTML_FOLDER)"
 
 push:
 	rsync -avzh $(HTML_FOLDER)/* $(REMOTE_FILE_PATH)

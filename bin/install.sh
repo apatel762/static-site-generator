@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ---------------------------------------------------------------------------
 # HELPER FUNCTIONS
@@ -50,6 +50,8 @@ check_venv() {
         log "could not find a venv"
         log "creating one with version: $(python3 --version)"
         python3 -m venv venv
+        venv/bin/pip install --upgrade pip
+        venv/bin/pip install -r "$DIR/../requirements.txt"
     else
         log "venv already exists - skipping"
     fi
