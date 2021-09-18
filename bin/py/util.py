@@ -134,10 +134,6 @@ def create_folder(location: str) -> None:
     pathlib.Path(location).mkdir(parents=True, exist_ok=True)
 
 
-def mtime(file_name: str) -> datetime:
-    return datetime.fromtimestamp(os.path.getmtime(file_name))
-
-
 def path(*args: str) -> str:
     return os.sep.join(args)
 

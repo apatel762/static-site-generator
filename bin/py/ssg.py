@@ -21,6 +21,8 @@ def setup_json_state_file(location: str, notes_folder: str) -> None:
     Args:
         location (str): The relative or absolute location of the folder that
         contains the JSON state file
+        notes_folder (str): The relative or absolute location of the folder
+        that contains all of your markdown ntoes
     """
     state_file: dict = util.read_existing_json_state_file(location=location)
 
