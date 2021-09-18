@@ -1,8 +1,9 @@
 import argparse
 import os
 import re
+from argparse import Namespace
 from logging import Logger
-from typing import List, Tuple
+from typing import List, Tuple, Set
 
 # regular expression for finding markdown style links
 # i.e. something like `[My Link](https://broadsilver.com)`
@@ -10,6 +11,10 @@ import util
 
 # noinspection RegExpRedundantEscape
 md_links = re.compile("\[(.*?)\]\((.*?)\)", re.DOTALL)
+
+
+def get_logger() -> Logger:
+    return util.get_logger(logger_name='generate_backlinks_files')
 
 
 def markdown_filenames(folder_path: str) -> List[str]:
@@ -41,12 +46,36 @@ def backlinks_html(refs: List[Tuple[str, str]]) -> str:
 
 
 def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
-    file_names = markdown_filenames(folder_path=notes_folder)
+    logger: Logger = get_logger()
+
+    file_names: List[str] = markdown_filenames(folder_path=notes_folder)
     logger.info(f'Found {len(file_names)} files in {notes_folder}')
+
     util.create_folder(location=backlinks_folder)
     logger.info(f'Will put backlinks into: {backlinks_folder}/')
-    # NOTE: current backlink searching is slow... O(n^2)
+
+    # find all of the files that have changed since the last script run by
+    # looking into the JSON state file to speed up the backlinks generation
+    state_file: dict = util.read_existing_json_state_file(location=backlinks_folder)
+    relevant_file_names: Set[str] = set()
     for file_name in file_names:
+        key: str = util.strip_file_extension(file_name)
+        if state_file['files'][key]['last_checked'] == state_file['runtime']:
+            relevant_file_names.add(file_name)
+            # ensure that we also refresh the backlinks for the files that are
+            # referenced by this file (since the links go two ways)
+            with open(f'{notes_folder}/{file_name}', 'r') as f:
+                contents = f.read()
+                # the results of re.findall() will look something like
+                # [('Page B', 'pageB.md')]
+                # where the link in markdown would've been [Page B](pageB.md)
+                for _, link in md_links.findall(contents):
+                    if util.is_md(link):
+                        relevant_file_names.add(link)
+
+    # create the backlinks files
+    for file_name in relevant_file_names:
+        logger.info(f'refreshing backlinks for {file_name}')
         # a list of all of the files that reference this one
         references = []
 
@@ -62,7 +91,6 @@ def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
 
             with open(f'{notes_folder}/{other_file}', 'r') as f:
                 contents = f.read()
-
                 # the results of re.findall() will look something like
                 # [('Page B', 'pageB.md')]
                 # where the link in markdown would've been [Page B](pageB.md)
@@ -99,7 +127,7 @@ if __name__ == '__main__':
         help='The relative path of a folder where you want the backlinks '
              'files to be stored when they are generated.'
     )
-    args = parser.parse_args()
-    logger: Logger = util.get_logger(logger_name='generate_backlinks_files')
+    args: Namespace = parser.parse_args()
+    logger: Logger = get_logger()
 
     generate_backlinks_files(notes_folder=args.notes, backlinks_folder=args.temp)

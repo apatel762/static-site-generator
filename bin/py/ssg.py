@@ -94,9 +94,9 @@ if __name__ == '__main__':
 
     setup_json_state_file(location=args.temp, notes_folder=args.notes)
 
-    # generate_backlinks_files.generate_backlinks_files(
-    #     notes_folder=args.notes,
-    #     backlinks_folder=args.temp)
+    generate_backlinks_files.generate_backlinks_files(
+        notes_folder=args.notes,
+        backlinks_folder=args.temp)
     # generate_index_file.create_index_file(
     #     temp_folder=args.temp,
     #     notes_folder=args.notes)
