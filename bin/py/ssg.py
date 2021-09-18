@@ -100,7 +100,7 @@ if __name__ == '__main__':
     generate_index_file.create_index_file(
         temp_folder=args.temp,
         notes_folder=args.notes)
-    # pandocify.do_pandoc_generation(
-    #     notes_folder=args.notes,
-    #     temp_folder=args.temp,
-    #     html_folder=args.html)
+    pandocify.do_pandoc_generation(
+        notes_folder=args.notes,
+        temp_folder=args.temp,
+        html_folder=args.html)

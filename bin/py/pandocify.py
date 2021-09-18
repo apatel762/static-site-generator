@@ -2,21 +2,46 @@ import argparse
 import os
 from argparse import Namespace
 from logging import Logger
+from typing import Set
 
 import util
+from generate_backlinks_files import md_links
+
+
+def get_logger() -> Logger:
+    return util.get_logger(logger_name='pandocify')
 
 
 def do_pandoc_generation(notes_folder: str, temp_folder: str, html_folder: str) -> None:
-    logger: Logger = util.get_logger(logger_name='pandocify')
+    logger: Logger = get_logger()
 
     for folder in [notes_folder, temp_folder, html_folder]:
         logger.info('creating folder: \'%s\' if it doesn\'t exist already', folder)
         util.create_folder(folder)
 
-    for file in os.listdir(notes_folder):
-        if not util.is_md(file):
+    # only queue up files for pandoc generation if they (or the files that
+    # point to them) have been modified recently, so that we don't have to
+    # regenerate everything each time we make one change in one file.
+    state_file: dict = util.read_existing_json_state_file(location=temp_folder)
+    relevant_file_names: Set[str] = set()
+    for file_name in os.listdir(notes_folder):
+        if not util.is_md(file_name):
             continue
+        key: str = util.strip_file_extension(file_name)
+        if state_file['files'][key]['last_checked'] == state_file['runtime']:
+            relevant_file_names.add(file_name)
+            # ensure that we also refresh the backlinks for the files that are
+            # referenced by this file (since the links go two ways)
+            with open(f'{notes_folder}/{file_name}', 'r') as f:
+                contents = f.read()
+                # the results of re.findall() will look something like
+                # [('Page B', 'pageB.md')]
+                # where the link in markdown would've been [Page B](pageB.md)
+                for _, link in md_links.findall(contents):
+                    if util.is_md(link):
+                        relevant_file_names.add(link)
 
+    for file in relevant_file_names:
         # the path to the note is always gonna be in the notes_folder
         file_full_path: str = util.path(notes_folder, file)
         note_title = util.note_title(file_full_path)
@@ -30,7 +55,7 @@ def do_pandoc_generation(notes_folder: str, temp_folder: str, html_folder: str) 
         # the .md.backlinks suffix, and it should be in the temp folder
         file_backlinks: str = util.path(temp_folder, file + '.backlinks')
 
-        logger.debug('converting %s to html, title=%s', file, note_title)
+        logger.info('converting %s to html, title=%s', file, note_title)
         util.do_run(cmd=[
             'pandoc',
             file_full_path, file_backlinks,
