@@ -6,16 +6,6 @@ from logging import Logger
 import util
 
 
-def validate_file_exists(path: str, error_on_validation_failure: bool = True) -> bool:
-    if os.path.isfile(path):
-        return True
-    else:
-        if error_on_validation_failure:
-            raise FileNotFoundError(f'could not find \'{path}\'')
-        else:
-            return False
-
-
 def do_pandoc_generation(notes_folder: str, temp_folder: str, html_folder: str) -> None:
     logger: Logger = util.get_logger(logger_name='pandocify')
 
@@ -53,7 +43,7 @@ def do_pandoc_generation(notes_folder: str, temp_folder: str, html_folder: str) 
     # if the index.md was generated in the temp folder, pandocify it
     index_file_name = 'index.md'
     generated_index_file = util.path(temp_folder, index_file_name)
-    if validate_file_exists(generated_index_file, error_on_validation_failure=False):
+    if util.validate_file_exists(generated_index_file, error_on_validation_failure=False):
         output_file = util.path(
             html_folder, util.change_file_extension(index_file_name, '.html'))
         index_title = util.note_title(generated_index_file)

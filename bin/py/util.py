@@ -20,6 +20,16 @@ def get_logger(logger_name: str) -> logging.Logger:
     return logger
 
 
+def validate_file_exists(path: str, error_on_validation_failure: bool = True) -> bool:
+    if os.path.isfile(path):
+        return True
+    else:
+        if error_on_validation_failure:
+            raise FileNotFoundError(f'could not find \'{path}\'')
+        else:
+            return False
+
+
 def last_n_chars(s: str, n: int) -> str:
     return s[-n::]
 
