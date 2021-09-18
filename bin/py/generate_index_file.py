@@ -7,6 +7,10 @@ import sys
 import util
 
 
+def get_logger() -> Logger:
+    return util.get_logger(logger_name='generate_index_file')
+
+
 def link_data(folder_path: str) -> List[Tuple[str, str]]:
     tmp = []
     for file_name_ in os.listdir(folder_path):
@@ -35,7 +39,7 @@ def todo_data(folder_path: str) -> List[Tuple[str, List[str]]]:
 
 
 def create_index_file(temp_folder: str, notes_folder: str):
-    logger: Logger = util.get_logger(logger_name='generate_index_file')
+    logger: Logger = get_logger()
 
     data: List[Tuple[str, str]] = link_data(folder_path=notes_folder)
     todos: List[Tuple[str, List[str]]] = todo_data(folder_path=notes_folder)

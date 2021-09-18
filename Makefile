@@ -7,7 +7,7 @@ MARKDOWN_FILES_LOCATION=/home/arjun/.nb/notes
 # relative path of the temp folder where the .backlinks files will go
 # can also as a generic temp folder since it gets cleaned after every
 # build (e.g. for index.html file generation)
-TEMP_FOLDER=temp
+TEMP_FOLDER=cache
 
 # relative path of the folder where the html files will go
 HTML_FOLDER=html
@@ -19,12 +19,8 @@ REMOTE_FILE_PATH=amigo@192.168.0.26:/var/broadwater/notes/raw/
 # ----------------------------------------------------------------------
 
 all: \
-	clean \
 	install \
-	generate-backlinks \
-	generate-index \
-	pandoc-conversion \
-	copy-css-and-js
+	build
 
 clean:
 	rm -rfv "$(TEMP_FOLDER)"
@@ -33,23 +29,11 @@ clean:
 install:
 	@bin/install.sh
 
-generate-backlinks:
-	@venv/bin/python bin/py/generate_backlinks_files.py \
-		--temp "$(TEMP_FOLDER)" \
-		--notes "$(MARKDOWN_FILES_LOCATION)"
-
-generate-index:
-	@venv/bin/python bin/py/generate_index_file.py \
-		--temp "$(TEMP_FOLDER)" \
-		--notes "$(MARKDOWN_FILES_LOCATION)"
-
-pandoc-conversion:
-	@venv/bin/python bin/py/pandocify.py \
-		--temp "$(TEMP_FOLDER)" \
+build:
+	@venv/bin/python bin/py/ssg.py \
 		--notes "$(MARKDOWN_FILES_LOCATION)" \
+		--temp "$(TEMP_FOLDER)" \
 		--html "$(HTML_FOLDER)"
-
-copy-css-and-js:
 	@mkdir -p bin/css
 	@mkdir -p "$(HTML_FOLDER)/css"
 	@rsync -avzh --ignore-missing-args bin/css/*.css "$(HTML_FOLDER)/css"

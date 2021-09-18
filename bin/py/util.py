@@ -1,11 +1,14 @@
+import hashlib
+import json
 import logging
 import os
 import pathlib
 import string
 import sys
 import unicodedata
-from typing import List, Union
+from datetime import datetime
 from subprocess import CompletedProcess, run
+from typing import List
 
 
 def get_logger(logger_name: str) -> logging.Logger:
@@ -18,6 +21,44 @@ def get_logger(logger_name: str) -> logging.Logger:
     logger.setLevel(logging.INFO)
 
     return logger
+
+
+def check_file_exists(path: str, error_on_validation_failure: bool = False) -> bool:
+    if os.path.isfile(path):
+        return True
+    else:
+        if error_on_validation_failure:
+            raise FileNotFoundError(f'could not find \'{path}\'')
+        else:
+            return False
+
+
+def sha256(file_name: str) -> str:
+    with open(file_name, "rb") as f:
+        raw_hash = hashlib.sha256(f.read())
+        return raw_hash.hexdigest()
+
+
+def persist_json(json_struct: dict, location: str) -> None:
+    create_folder(location=location)
+    with open(path(location, 'state.json'), 'w') as f:
+        json.dump(
+            json_struct,
+            f,
+            indent=2,
+            sort_keys=True)
+
+
+def read_existing_json_state_file(location: str) -> dict:
+    if check_file_exists(path(location, 'state.json')):
+        try:
+            with open(path(location, 'state.json'), 'r') as f:
+                data: str = f.read()
+                return json.loads(data)
+        except json.decoder.JSONDecodeError:
+            return {}
+    else:
+        return {}
 
 
 def last_n_chars(s: str, n: int) -> str:
