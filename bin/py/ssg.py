@@ -1,5 +1,4 @@
 import argparse
-import json
 import os
 from argparse import Namespace
 from datetime import datetime
@@ -14,31 +13,6 @@ import pandocify
 DATE_TIME_FORMAT = '%Y-%m-%dT%H%M%SZ'
 
 
-def persist_json(json_struct: dict, location: str) -> None:
-    logger.info('dumping new state file to disk')
-    util.create_folder(location=location)
-    with open(util.path(location, 'state.json'), 'w') as f:
-        json.dump(
-            json_struct,
-            f,
-            indent=2,
-            sort_keys=True)
-
-
-def read_existing_json_state_file(location: str) -> dict:
-    if util.check_file_exists(util.path(location, 'state.json')):
-        logger.info('reading existing json state file')
-        try:
-            with open(util.path(location, 'state.json'), 'r') as f:
-                data: str = f.read()
-                return json.loads(data)
-        except json.decoder.JSONDecodeError:
-            return {}
-    else:
-        logger.info('no existing state file found, creating a new one')
-        return {}
-
-
 def setup_json_state_file(location: str, notes_folder: str) -> None:
     """
     The main orchestrator of the state file mechanics. This method must be
@@ -48,7 +22,7 @@ def setup_json_state_file(location: str, notes_folder: str) -> None:
         location (str): The relative or absolute location of the folder that
         contains the JSON state file
     """
-    state_file: dict = read_existing_json_state_file(location=location)
+    state_file: dict = util.read_existing_json_state_file(location=location)
 
     now: datetime = datetime.utcnow()
     now_str: str = now.strftime(DATE_TIME_FORMAT)
@@ -89,7 +63,7 @@ def setup_json_state_file(location: str, notes_folder: str) -> None:
 
     # save the new state of the JSON file to disk so that we can use it
     # the next time the script is run
-    persist_json(state_file, location)
+    util.persist_json(state_file, location)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
