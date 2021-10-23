@@ -4,11 +4,11 @@ from argparse import Namespace
 from datetime import datetime
 from logging import Logger
 
-import util
+import broken_link_checker
 import generate_backlinks_files
 import generate_index_file
 import pandocify
-
+import util
 
 DATE_TIME_FORMAT = '%Y-%m-%dT%H%M%SZ'
 
@@ -96,6 +96,9 @@ if __name__ == '__main__':
 
     setup_json_state_file(location=args.temp, notes_folder=args.notes)
 
+    broken_link_checker.check_for_broken_links(
+        notes_folder=args.notes,
+        cache_folder=args.temp)
     generate_backlinks_files.generate_backlinks_files(
         notes_folder=args.notes,
         backlinks_folder=args.temp)
