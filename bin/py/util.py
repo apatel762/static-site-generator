@@ -3,12 +3,18 @@ import json
 import logging
 import os
 import pathlib
+import re
 import string
 import sys
 import unicodedata
 from datetime import datetime
 from subprocess import CompletedProcess, run
-from typing import List
+from typing import List, Union
+
+# regular expression for finding markdown style links
+# i.e. something like `[My Link](https://broadsilver.com)`
+# noinspection RegExpRedundantEscape
+md_links = re.compile("\[(.*?)\]\((.*?)\)", re.DOTALL)
 
 
 def get_logger(logger_name: str) -> logging.Logger:

@@ -5,7 +5,6 @@ from logging import Logger
 from typing import Set
 
 import util
-from generate_backlinks_files import md_links
 
 
 def get_logger() -> Logger:
@@ -32,12 +31,12 @@ def do_pandoc_generation(notes_folder: str, temp_folder: str, html_folder: str) 
             relevant_file_names.add(file_name)
             # ensure that we also refresh the backlinks for the files that are
             # referenced by this file (since the links go two ways)
-            with open(f'{notes_folder}/{file_name}', 'r') as f:
+            with open(util.path(notes_folder, file_name), 'r') as f:
                 contents = f.read()
                 # the results of re.findall() will look something like
                 # [('Page B', 'pageB.md')]
                 # where the link in markdown would've been [Page B](pageB.md)
-                for _, link in md_links.findall(contents):
+                for _, link in util.md_links.findall(contents):
                     if util.is_md(link):
                         relevant_file_names.add(link)
 
@@ -103,4 +102,7 @@ if __name__ == '__main__':
         help='The relative path to the folder where HTML files will go')
     args: Namespace = parser.parse_args()
 
-    do_pandoc_generation(notes_folder=args.notes, temp_folder=args.temp, html_folder=args.html)
+    do_pandoc_generation(
+        notes_folder=args.notes,
+        temp_folder=args.temp,
+        html_folder=args.html)

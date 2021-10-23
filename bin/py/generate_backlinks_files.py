@@ -5,12 +5,7 @@ from argparse import Namespace
 from logging import Logger
 from typing import List, Tuple, Set
 
-# regular expression for finding markdown style links
-# i.e. something like `[My Link](https://broadsilver.com)`
 import util
-
-# noinspection RegExpRedundantEscape
-md_links = re.compile("\[(.*?)\]\((.*?)\)", re.DOTALL)
 
 
 def get_logger() -> Logger:
@@ -64,12 +59,12 @@ def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
             relevant_file_names.add(file_name)
             # ensure that we also refresh the backlinks for the files that are
             # referenced by this file (since the links go two ways)
-            with open(f'{notes_folder}/{file_name}', 'r') as f:
+            with open(util.path(notes_folder, file_name), 'r') as f:
                 contents = f.read()
                 # the results of re.findall() will look something like
                 # [('Page B', 'pageB.md')]
                 # where the link in markdown would've been [Page B](pageB.md)
-                for _, link in md_links.findall(contents):
+                for _, link in util.md_links.findall(contents):
                     if util.is_md(link):
                         relevant_file_names.add(link)
 
@@ -94,7 +89,7 @@ def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
                 # the results of re.findall() will look something like
                 # [('Page B', 'pageB.md')]
                 # where the link in markdown would've been [Page B](pageB.md)
-                for _, link in md_links.findall(contents):
+                for _, link in util.md_links.findall(contents):
                     if link == file_name:
                         logger.debug(f'{file_name}: referenced by {other_file}')
                         title = util.note_title(f'{notes_folder}/{other_file}')
