@@ -45,4 +45,4 @@ build:
 	@rsync -avzh --ignore-missing-args "$(MARKDOWN_FILES_LOCATION)/html" "$(HTML_FOLDER)"
 
 push:
-	rsync -avzh $(HTML_FOLDER)/* $(REMOTE_FILE_PATH)
+	rsync -avzh --delete $(HTML_FOLDER)/* $(REMOTE_FILE_PATH)
