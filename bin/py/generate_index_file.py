@@ -61,17 +61,7 @@ def create_index_file(temp_folder: str, notes_folder: str):
             f.write('## Tasks')
             f.write('\n')
             f.write('\n')
-            f.write(f'A task list (also called a to-do list or "things-to-do") is a '
-                    f'list of tasks to be completed, such as chores or steps toward '
-                    f'completing a project. It is an inventory tool which serves as an '
-                    f'alternative or supplement to memory.')
-            f.write('\n')
-            f.write('\n')
-            f.write('Wikipedia. "[Time management]('
-                    'https://en.wikipedia.org/wiki/Time_management'
-                    '#Implementation_of_goals)". *[Archived]('
-                    'https://web.archive.org/web/20210627141229/https://en.wikipedia'
-                    '.org/wiki/Time_management)*. Retrieved June 27, 2021.')
+            f.write(f'A collection of TODO items across all of your files.')
             f.write('\n')
             f.write('\n')
             f.write('<details>')
