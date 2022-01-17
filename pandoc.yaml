@@ -3,7 +3,10 @@
 #
 # See https://pandoc.org/MANUAL.html#default-files
 
-from: markdown+emoji
+# extensions:
+# emoji = parse textual emojis like :smile: as unicode emoticons
+# fenced_divs = markdown native div blocks
+from: markdown+emoji+fenced_divs
 to: html5
 
 metadata:
