@@ -23,7 +23,6 @@ all: \
 	build
 
 clean:
-	rm -rfv venv
 	rm -rfv "$(TEMP_FOLDER)"
 	rm -rfv "$(HTML_FOLDER)"
 
