@@ -29,6 +29,7 @@ clean:
 install:
 	@bin/install.sh
 	venv/bin/pre-commit install
+	venv/bin/pre-commit run
 
 build:
 	@venv/bin/python bin/py/ssg.py \
