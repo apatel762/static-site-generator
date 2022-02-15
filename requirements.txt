@@ -1,1 +1,2 @@
-pandocfilters>=1.5.0
+pandocfilters~=1.5.0
+pre-commit~=2.17.0
