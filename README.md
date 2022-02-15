@@ -1,24 +1,31 @@
-# backlinks-ssg
+# static-site-generator
 
-A static site generator for markdown notes that also generates backlinks between files.
+A static site generator that I created so that I had a way of easily publishing a webpage based on my markdown notes. Behind the scenes, the generator is just a few Python scripts using Pandoc to convert the notes to HTML and do some extra stuff in-between.
 
-**Requires `pandoc` 2.8+**
+Some notable stuff that I added:
 
-## Context
+- Custom `pandoc` filter for formatting spaced-repetition prompts
+- Custom `pandoc` filter for formatting links
+- A script that checks for broken links in my notes
+- A script that generates backlinks for all of my notes
+- A script that generates an 'index' file if one isn't present
+- Custom CSS for all of the above
 
-I wanted a way of managing backlinks in my markdown notes when I converted them to HTML. I came across someone who wanted to do the exact same thing so I thought I'd take their code as a starting point and re-write it so that it works the way I want.
+## Requirements
 
-The code I started from:
+- Linux
+  - `rsync`
+  - `python` 3.8+
+  - `pandoc` 2.8+
 
-- [Build HTML with backlinks via a Makefile](https://web.archive.org/web/20210101134400/https://stackoverflow.com/questions/53798599/how-can-i-build-html-with-a-makefile-with-backlinks)
-- [kaihendry/backlinks](https://web.archive.org/web/20210101134414/https://github.com/kaihendry/backlinks)
+I haven't tested MacOS or Windows and this static site generator probably won't work on those OSes.
 
 ## Usage
 
-Modify the variables at the top of the Makefile and then once you're
-sure that everything is in the right place, just run:
-```Bash
+Modify the variables at the top of the Makefile and then once you're sure that everything is in the right place, just run:
+
+```bash
 make
 ```
-from this git repo and your Markdown files will be turned into a static
-site.
+
+from this git repo and your Markdown files will be turned into a static site.
