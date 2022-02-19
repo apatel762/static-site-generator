@@ -1,15 +1,16 @@
 import argparse
 import os
-import re
 from argparse import Namespace
 from logging import Logger
-from typing import List, Tuple, Set
+from typing import List
+from typing import Set
+from typing import Tuple
 
 import util
 
 
 def get_logger() -> Logger:
-    return util.get_logger(logger_name='generate_backlinks_files')
+    return util.get_logger(logger_name="generate_backlinks_files")
 
 
 def markdown_filenames(folder_path: str) -> List[str]:
@@ -24,30 +25,27 @@ def html_link(href: str, display: str) -> str:
 
 def backlinks_html(refs: List[Tuple[str, str]]) -> str:
     if len(refs) <= 0:
-        return ''
+        return ""
 
-    txt: List[str] = [
-        '<div class="footer">',
-        '<ul>'
-    ]
+    txt: List[str] = ['<div class="footer">', "<ul>"]
     for backlink, link_display in set(refs):
-        txt.append('<li>' + html_link(backlink, link_display) + '</li>')
-    txt.append('</ul>')
+        txt.append("<li>" + html_link(backlink, link_display) + "</li>")
+    txt.append("</ul>")
     # we don't close the div.footer that we opened here; pandoc will do that
     # for us when it generates the final HTML. Why do this? so when pandoc
     # generates the footnotes, they will be included in the nicely formatted
     # footer section that we've created for the backlinks
-    return '\n'.join(txt)
+    return "\n".join(txt)
 
 
 def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
     logger: Logger = get_logger()
 
     file_names: List[str] = markdown_filenames(folder_path=notes_folder)
-    logger.info(f'Found {len(file_names)} files in {notes_folder}')
+    logger.info(f"Found {len(file_names)} files in {notes_folder}")
 
     util.create_folder(location=backlinks_folder)
-    logger.info(f'Will put backlinks into: {backlinks_folder}/')
+    logger.info(f"Will put backlinks into: {backlinks_folder}/")
 
     # find all of the files that have changed since the last script run by
     # looking into the JSON state file to speed up the backlinks generation
@@ -55,11 +53,11 @@ def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
     relevant_file_names: Set[str] = set()
     for file_name in file_names:
         key: str = util.strip_file_extension(file_name)
-        if state_file['files'][key]['last_checked'] == state_file['runtime']:
+        if state_file["files"][key]["last_checked"] == state_file["runtime"]:
             relevant_file_names.add(file_name)
             # ensure that we also refresh the backlinks for the files that are
             # referenced by this file (since the links go two ways)
-            with open(util.path(notes_folder, file_name), 'r') as f:
+            with open(util.path(notes_folder, file_name), "r") as f:
                 contents = f.read()
                 # the results of re.findall() will look something like
                 # [('Page B', 'pageB.md')]
@@ -70,7 +68,7 @@ def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
 
     # create the backlinks files
     for file_name in relevant_file_names:
-        logger.info(f'refreshing backlinks for {file_name}')
+        logger.info(f"refreshing backlinks for {file_name}")
         # a list of all of the files that reference this one
         references = []
 
@@ -79,48 +77,52 @@ def generate_backlinks_files(notes_folder: str, backlinks_folder: str) -> None:
         for other_file in file_names:
             if other_file == file_name:
                 continue
-            if other_file == 'index.md':
+            if other_file == "index.md":
                 # the index file is supposed to reference a lot of stuff
                 # so I don't want it to pollute the backlinks
                 continue
 
-            with open(f'{notes_folder}/{other_file}', 'r') as f:
+            with open(f"{notes_folder}/{other_file}", "r") as f:
                 contents = f.read()
                 # the results of re.findall() will look something like
                 # [('Page B', 'pageB.md')]
                 # where the link in markdown would've been [Page B](pageB.md)
                 for _, link in util.md_links.findall(contents):
                     if link == file_name:
-                        logger.debug(f'{file_name}: referenced by {other_file}')
-                        title = util.note_title(f'{notes_folder}/{other_file}')
+                        logger.debug(f"{file_name}: referenced by {other_file}")
+                        title = util.note_title(f"{notes_folder}/{other_file}")
                         references.append((other_file, title))
 
         # write out all of the backlinks using some properly styled markdown.
         # this bit will be appended to the original note later on when it is
         # converted to a standalone HTML page
-        backlinks_file_path = f'{backlinks_folder}/{file_name}.backlinks'
-        with open(backlinks_file_path, 'w') as f:
+        backlinks_file_path = f"{backlinks_folder}/{file_name}.backlinks"
+        with open(backlinks_file_path, "w") as f:
             f.write(backlinks_html(refs=references))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='Generate backlinks for files in a given folder')
+        description="Generate backlinks for files in a given folder"
+    )
     parser.add_argument(
-        '-n', '--notes',
+        "-n",
+        "--notes",
         required=True,
         type=str,
-        help='The absolute path of the folder that holds all of your notes. '
-             'All of the notes that you want to generate the backlinks for '
-             'should be in the top-level of this folder; the script will not '
-             'recursively serach for any markdown files that are in '
-             'subfolders.')
+        help="The absolute path of the folder that holds all of your notes. "
+        "All of the notes that you want to generate the backlinks for "
+        "should be in the top-level of this folder; the script will not "
+        "recursively serach for any markdown files that are in "
+        "subfolders.",
+    )
     parser.add_argument(
-        '-t', '--temp',
+        "-t",
+        "--temp",
         required=True,
         type=str,
-        help='The relative path of a folder where you want the backlinks '
-             'files to be stored when they are generated.'
+        help="The relative path of a folder where you want the backlinks "
+        "files to be stored when they are generated.",
     )
     args: Namespace = parser.parse_args()
     logger: Logger = get_logger()

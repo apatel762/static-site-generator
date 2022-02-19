@@ -27,23 +27,23 @@ clean:
 	rm -rfv "$(HTML_FOLDER)"
 
 install:
-	@bin/install.sh
+	@static-site-generator/bin/install.sh
 	venv/bin/pre-commit install
 	venv/bin/pre-commit run
 
 build:
-	@venv/bin/python bin/py/ssg.py \
+	@venv/bin/python static-site-generator/bin/py/ssg.py \
 		--notes "$(MARKDOWN_FILES_LOCATION)" \
 		--temp "$(TEMP_FOLDER)" \
 		--html "$(HTML_FOLDER)"
-	@mkdir -p bin/css
+	@mkdir -p static-site-generator/bin/css
 	@mkdir -p "$(HTML_FOLDER)/css"
-	@rsync -avzh --ignore-missing-args bin/css/*.css "$(HTML_FOLDER)/css"
-	@rsync -avzh --ignore-missing-args bin/css/*.woff2 "$(HTML_FOLDER)/css"
-	@mkdir -p bin/js
+	@rsync -avzh --ignore-missing-args static-site-generator/bin/css/*.css "$(HTML_FOLDER)/css"
+	@rsync -avzh --ignore-missing-args static-site-generator/bin/css/*.woff2 "$(HTML_FOLDER)/css"
+	@mkdir -p static-site-generator/bin/js
 	@mkdir -p "$(HTML_FOLDER)/js"
-	@rsync -avzh --ignore-missing-args bin/js/*.js "$(HTML_FOLDER)/js"
-	@rsync -avzh --ignore-missing-args bin/js/index.json "$(HTML_FOLDER)/js"
+	@rsync -avzh --ignore-missing-args static-site-generator/bin/js/*.js "$(HTML_FOLDER)/js"
+	@rsync -avzh --ignore-missing-args static-site-generator/bin/js/index.json "$(HTML_FOLDER)/js"
 	@rsync -avzh --ignore-missing-args "$(MARKDOWN_FILES_LOCATION)/html" "$(HTML_FOLDER)"
 
 push:

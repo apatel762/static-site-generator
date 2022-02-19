@@ -7,20 +7,19 @@ import re
 import string
 import sys
 import unicodedata
-from datetime import datetime
-from subprocess import CompletedProcess, run
-from typing import List, Union
+from subprocess import CompletedProcess
+from subprocess import run
+from typing import List
 
 # regular expression for finding markdown style links
 # i.e. something like `[My Link](https://broadsilver.com)`
-# noinspection RegExpRedundantEscape
-md_links = re.compile("\[(.*?)\]\((.*?)\)", re.DOTALL)
+md_links = re.compile("[(.*?)]((.*?))", re.DOTALL)
 
 
 def get_logger(logger_name: str) -> logging.Logger:
     handler = logging.StreamHandler(stream=sys.stdout)
     handler.setLevel(logging.INFO)
-    handler.setFormatter(logging.Formatter('%(name)s: %(levelname)s - %(message)s'))
+    handler.setFormatter(logging.Formatter("%(name)s: %(levelname)s - %(message)s"))
 
     logger = logging.getLogger(name=logger_name)
     logger.addHandler(handler)
@@ -34,7 +33,7 @@ def check_file_exists(path: str, error_on_validation_failure: bool = False) -> b
         return True
     else:
         if error_on_validation_failure:
-            raise FileNotFoundError(f'could not find \'{path}\'')
+            raise FileNotFoundError(f"could not find '{path}'")
         else:
             return False
 
@@ -47,18 +46,14 @@ def sha256(file_name: str) -> str:
 
 def persist_json(json_struct: dict, location: str) -> None:
     create_folder(location=location)
-    with open(path(location, 'state.json'), 'w') as f:
-        json.dump(
-            json_struct,
-            f,
-            indent=2,
-            sort_keys=True)
+    with open(path(location, "state.json"), "w") as f:
+        json.dump(json_struct, f, indent=2, sort_keys=True)
 
 
 def read_existing_json_state_file(location: str) -> dict:
-    if check_file_exists(path(location, 'state.json')):
+    if check_file_exists(path(location, "state.json")):
         try:
-            with open(path(location, 'state.json'), 'r') as f:
+            with open(path(location, "state.json"), "r") as f:
                 data: str = f.read()
                 return json.loads(data)
         except json.decoder.JSONDecodeError:
@@ -72,48 +67,43 @@ def last_n_chars(s: str, n: int) -> str:
 
 
 def is_md(file_name_with_extension: str) -> bool:
-    return last_n_chars(file_name_with_extension, n=3) == '.md'
+    return last_n_chars(file_name_with_extension, n=3) == ".md"
 
 
 def first_line(file_path: str) -> str:
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         return f.readline()
 
 
 def note_title(file_path: str) -> str:
-    return first_line(file_path) \
-        .replace('# ', '') \
-        .replace('\n', '')
+    return first_line(file_path).replace("# ", "").replace("\n", "")
 
 
 def extract_todos(file_path: str) -> List[str]:
     tmp = []
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         for line in f.readlines():
-            if '::TODO' in line:
-                line_clean = \
-                    line.lstrip('- ')\
-                        .replace('::', '')\
-                        .replace('TODO', '')
+            if "::TODO" in line:
+                line_clean = line.lstrip("- ").replace("::", "").replace("TODO", "")
                 tmp.append(line_clean)
     return tmp
 
 
 def change_file_extension(file_path: str, new_ext: str) -> str:
     fp: pathlib.Path = pathlib.Path(file_path)
-    fp: pathlib.Path = fp.with_suffix('')
+    fp: pathlib.Path = fp.with_suffix("")
     fp: pathlib.Path = fp.with_suffix(new_ext)
     return str(fp)
 
 
 def strip_file_extension(file_path: str) -> str:
     fp: pathlib.Path = pathlib.Path(file_path)
-    fp: pathlib.Path = fp.with_suffix('')
+    fp: pathlib.Path = fp.with_suffix("")
     return str(fp)
 
 
-def clean_filename(filename, chars_to_replace: str = ' ', replacement: str = '_'):
-    whitelist = f'-_.() {string.ascii_letters}{string.digits}'
+def clean_filename(filename, chars_to_replace: str = " ", replacement: str = "_"):
+    whitelist = f"-_.() {string.ascii_letters}{string.digits}"
     file_name_max_size = 255
 
     # change the chars_to_replace into underscores
@@ -121,11 +111,12 @@ def clean_filename(filename, chars_to_replace: str = ' ', replacement: str = '_'
         filename = filename.replace(c, replacement)
 
     # keep only valid ascii chars
-    cleaned_filename = unicodedata.normalize('NFKD', filename).encode('ASCII',
-                                                                      'ignore').decode()
+    cleaned_filename = (
+        unicodedata.normalize("NFKD", filename).encode("ASCII", "ignore").decode()
+    )
 
     # keep only whitelisted chars
-    cleaned_filename = ''.join(c for c in cleaned_filename if c in whitelist)
+    cleaned_filename = "".join(c for c in cleaned_filename if c in whitelist)
 
     return cleaned_filename[:file_name_max_size]
 
@@ -133,7 +124,7 @@ def clean_filename(filename, chars_to_replace: str = ' ', replacement: str = '_'
 def to_footnote_id(file_name) -> str:
     f: str = strip_file_extension(file_name)
 
-    return clean_filename(f, chars_to_replace=' -').replace('_', '')
+    return clean_filename(f, chars_to_replace=" -").replace("_", "")
 
 
 def create_folder(location: str) -> None:
@@ -154,10 +145,8 @@ def do_run(cmd: List[str]) -> CompletedProcess:
     """
     return run(
         args=cmd,
-        env={
-            'PATH': os.environ['PATH']
-        },
+        env={"PATH": os.environ["PATH"]},
         check=True,
         capture_output=True,
-        text=True
+        text=True,
     )
