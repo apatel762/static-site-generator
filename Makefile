@@ -7,10 +7,10 @@ MARKDOWN_FILES_LOCATION=/home/arjun/.nb/notes
 # relative path of the temp folder where the .backlinks files will go
 # can also as a generic temp folder since it gets cleaned after every
 # build (e.g. for index.html file generation)
-TEMP_FOLDER=cache
+TEMP_FOLDER=static-site-generator_output/cache
 
 # relative path of the folder where the html files will go
-HTML_FOLDER=html
+HTML_FOLDER=static-site-generator_output/html
 
 # a location on a server that you want to push the HTML files to
 # if you host the website on a server that you manage

@@ -28,9 +28,9 @@ css:
 #   https://pandoc.org/filters.html#but-i-dont-want-to-learn-haskell
 #   https://github.com/jgm/pandocfilters/blob/master/pandocfilters.py
 filters:
-  - bin/links_to_html.py
-  - bin/srs_qna_prompts.py
+  - static-site-generator/bin/links_to_html.py
+  - static-site-generator/bin/srs_qna_prompts.py
 
 # metadata that you want to define manually
 include-in-header:
-  - bin/meta/meta.html
+  - static-site-generator/bin/meta/meta.html
