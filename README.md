@@ -1,5 +1,7 @@
 # static-site-generator
 
+**This project is no longer maintained**
+
 A static site generator that I created so that I had a way of easily publishing a webpage based on my markdown notes. Behind the scenes, the generator is just a few Python scripts using Pandoc to convert the notes to HTML and do some extra stuff in-between.
 
 Some notable stuff that I added:
