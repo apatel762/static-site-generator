@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.modulith.Modulith;
 
-@Modulith
+@Modulith(systemName = "Static Site Generator", sharedModules = "common")
 @RequiredArgsConstructor
 @ConfigurationPropertiesScan
 public class StaticSiteGeneratorApplication implements CommandLineRunner {
