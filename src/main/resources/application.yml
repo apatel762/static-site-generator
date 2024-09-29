@@ -1,0 +1,6 @@
+spring.application.name: static-site-generator
+
+ssg:
+  books:
+    inputFile: /var/home/apatel/Documents/NotesData/Books.json
+    outputDir: /var/home/apatel/Documents/NotesData/
