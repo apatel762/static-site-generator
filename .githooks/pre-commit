@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+function _pre_commit_hook() {
+  # variable to help us navigate out of the
+  # git hooks folder and up to the project root
+  local CWD
+  local MAIN_DIR
+
+  CWD=$(pwd)
+  MAIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+  cd "$MAIN_DIR"/../../ || exit 1
+
+  # -------------------------------------------
+  # this is the actual pre-commit hook work
+
+  ./mvnw spotless:check &>/dev/null
+  if [ $? -ne 0 ]; then
+    echo "Running './mvnw spotless:apply' to fix code format violations."
+    ./mvnw spotless:apply
+
+    # let the user know that they need to check the changes
+    echo ""
+    echo "================================"
+    echo "FILES HAVE BEEN REFORMATTED!"
+    echo "Please check them and re-commit."
+    echo "================================"
+
+    # go back to current working dir
+    # and return failure exit code
+    cd "$CWD" || exit 1
+    exit 1
+  fi
+
+  # -------------------------------------------
+
+  cd "$CWD" || exit 1
+  exit 0
+}
+
+echo "Running pre-commit hook"
+_pre_commit_hook
