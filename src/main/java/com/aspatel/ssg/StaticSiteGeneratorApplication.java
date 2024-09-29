@@ -15,12 +15,19 @@ public class StaticSiteGeneratorApplication implements CommandLineRunner {
   private final BookService bookService;
 
   public static void main(String[] args) {
-    SpringApplication.run(StaticSiteGeneratorApplication.class, args);
+
+    try (final var applicationContext =
+        SpringApplication.run(StaticSiteGeneratorApplication.class, args)) {
+
+      /* Using a try-with-resources block here so that the application
+         context automatically closes when the command-line runner has
+         completed its work.
+      */
+    }
   }
 
   @Override
   public void run(final String... args) throws Exception {
     bookService.listAll();
-    System.exit(0);
   }
 }
